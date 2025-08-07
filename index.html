@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Assinatura Linhanyl</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #4a4a4a;
+            text-align: center;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+        
+        .form-container, .preview-container {
+            display: inline-block;
+            vertical-align: top;
+            width: 48%;
+            padding: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        button {
+            background-color: #6a5acd;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background-color: #7b68ee;
+            transform: translateY(-2px);
+        }
+        
+        .signature-preview {
+            border: 1px dashed #ccc;
+            padding: 20px;
+            min-height: 200px;
+            background-color: white;
+            position: relative;
+        }
+        
+        .signature {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        .logo-img {
+            height: 70px;
+            margin-right: 20px;
+            position: relative;
+            transition: all 0.5s ease;
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        .logo-animation {
+            position: relative;
+            display: inline-block;
+            padding-bottom: 20px; /* Espaço para as linhas animadas */
+        }
+        
+        .wavy-line {
+            position: absolute;
+            height: 4px;
+            border-radius: 4px;
+            animation: wave 3s infinite ease-in-out;
+            opacity: 0.8;
+            bottom: 0;
+            left: 0;
+            transform-origin: center;
+        }
+        
+        .line1 {
+            background-color: #6a5acd;
+            width: 100%;
+            animation-delay: 0s;
+            bottom: -10px;
+        }
+        
+        .line2 {
+            background-color: #ff7f50;
+            width: 90%;
+            animation-delay: 0.3s;
+            bottom: -15px;
+            left: 5%;
+        }
+        
+        .line3 {
+            background-color: #20b2aa;
+            width: 80%;
+            animation-delay: 0.6s;
+            bottom: -20px;
+            left: 10%;
+        }
+        
+        .line4 {
+            background-color: #ffd700;
+            width: 70%;
+            animation-delay: 0.9s;
+            bottom: -25px;
+            left: 15%;
+        }
+        
+        .contact-info {
+            border-left: 3px solid #6a5acd;
+            padding-left: 15px;
+            animation: fadeIn 1s ease-out;
+        }
+        
+        .name {
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .department {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .email, .phone, .location {
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .website {
+            display: flex;
+            align-items: center;
+        }
+        
+        .website a {
+            color: #6a5acd;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .website a:hover {
+            color: #7b68ee;
+            text-decoration: underline;
+        }
+        
+        .slogan {
+            font-size: 11px;
+            color: #999;
+            margin-top: 15px;
+            text-align: right;
+            animation: slideIn 1.5s ease-out;
+            font-weight: bold;
+        }
+        
+        @keyframes wave {
+            0%, 100% {
+                transform: translateX(0) scaleY(1) scaleX(1);
+            }
+            25% {
+                transform: translateX(10px) scaleY(0.7) scaleX(0.9);
+            }
+            50% {
+                transform: translateX(0) scaleY(1.3) scaleX(1.1);
+            }
+            75% {
+                transform: translateX(-10px) scaleY(0.8) scaleX(0.95);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .icon {
+            margin-right: 10px;
+            color: #6a5acd;
+            width: 16px;
+            text-align: center;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .contact-info div:hover .icon {
+            transform: scale(1.3) rotate(10deg);
+            color: #ff7f50;
+        }
+        
+        .color-strip {
+            height: 6px;
+            background: linear-gradient(90deg, #6a5acd, #ff7f50, #20b2aa, #ffd700);
+            margin-bottom: 20px;
+            border-radius: 3px;
+            animation: colorShift 6s infinite alternate, stripPulse 4s infinite;
+        }
+        
+        @keyframes colorShift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+        
+        @keyframes stripPulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+        
+        .buttons {
+            text-align: center;
+            margin-top: 25px;
+        }
+        
+        .copy-btn {
+            background-color: #20b2aa;
+            margin-left: 10px;
+        }
+        
+        .copy-btn:hover {
+            background-color: #3cb371;
+        }
+        
+        .download-btn {
+            background-color: #ff7f50;
+            margin-left: 10px;
+        }
+        
+        .download-btn:hover {
+            background-color: #ff6347;
+        }
+        
+        .logo-effects {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            background: rgba(106, 90, 205, 0.6);
+            border-radius: 50%;
+            animation: floatParticle 8s infinite linear;
+        }
+        
+        @keyframes floatParticle {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(100px, -100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Gerador de Assinatura de Email - Linhanyl</h1>
+        
+        <div class="color-strip"></div>
+        
+        <div class="form-container">
+            <div class="form-group">
+                <label for="name">Nome Completo:</label>
+                <input type="text" id="name" placeholder="Mateus Santos" value="Mateus Santos">
+            </div>
+            
+            <div class="form-group">
+                <label for="department">Departamento:</label>
+                <input type="text" id="department" placeholder="Financeiro" value="Financeiro">
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" placeholder="mateus.santos@gmail.com" value="mateus.santos@gmail.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Telefone:</label>
+                <input type="tel" id="phone" placeholder="(15) 99999-1234" value="(15) 99999-1234">
+            </div>
+            
+            <div class="form-group">
+                <label for="location">Localização:</label>
+                <input type="text" id="location" placeholder="Sorocaba/SP" value="Sorocaba/SP">
+            </div>
+            
+            <div class="form-group">
+                <label for="website">Site:</label>
+                <input type="url" id="website" placeholder="www.linhanyi.com" value="www.linhanyi.com">
+            </div>
+        </div>
+        
+        <div class="preview-container">
+            <h3>Pré-visualização:</h3>
+            <div class="signature-preview">
+                <div class="signature" id="signature-content">
+                    <div class="logo-container">
+                        <div class="logo-animation">
+                            <img src="Logo.png" alt="Linhanyl" class="logo-img">
+                            <div class="logo-effects" id="logo-effects"></div>
+                            <div class="wavy-line line1"></div>
+                            <div class="wavy-line line2"></div>
+                            <div class="wavy-line line3"></div>
+                            <div class="wavy-line line4"></div>
+                        </div>
+                        <div class="contact-info">
+                            <div class="name" id="preview-name">
+                                <i class="fas fa-user icon"></i>Mateus Santos
+                            </div>
+                            <div class="department" id="preview-department">
+                                <i class="fas fa-building icon"></i>Financeiro
+                            </div>
+                            <div class="email" id="preview-email">
+                                <i class="fas fa-envelope icon"></i>mateus.santos@gmail.com
+                            </div>
+                            <div class="phone" id="preview-phone">
+                                <i class="fas fa-phone icon"></i>(15) 99999-1234
+                            </div>
+                            <div class="location" id="preview-location">
+                                <i class="fas fa-map-marker-alt icon"></i>Sorocaba/SP
+                            </div>
+                            <div class="website">
+                                <i class="fas fa-globe icon"></i><a href="http://www.linhanyi.com" id="preview-website">www.linhanyi.com</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slogan">QUALIDADE EM TODOS OS PONTOS</div>
+                </div>
+            </div>
+            
+            <div class="buttons">
+                <button id="generate-btn">Gerar Assinatura</button>
+                <button id="copy-btn" class="copy-btn">Copiar HTML</button>
+                <button id="download-btn" class="download-btn">Download GIF</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = ['name', 'department', 'email', 'phone', 'location', 'website'];
+            
+            // Criar partículas animadas
+            createParticles();
+            
+            // Atualizar pré-visualização enquanto digita
+            inputs.forEach(inputId => {
+                document.getElementById(inputId).addEventListener('input', updatePreview);
+            });
+            
+            // Gerar assinatura
+            document.getElementById('generate-btn').addEventListener('click', generateSignature);
+            
+            // Copiar HTML
+            document.getElementById('copy-btn').addEventListener('click', copyHTML);
+            
+            // Download GIF
+            document.getElementById('download-btn').addEventListener('click', downloadGIF);
+            
+            function createParticles() {
+                const container = document.getElementById('logo-effects');
+                for (let i = 0; i < 12; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    
+                    // Posição aleatória
+                    const size = Math.random() * 8 + 4;
+                    const posX = Math.random() * 100;
+                    const posY = Math.random() * 100;
+                    const delay = Math.random() * 5;
+                    const duration = Math.random() * 5 + 5;
+                    
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    particle.style.left = `${posX}%`;
+                    particle.style.top = `${posY}%`;
+                    particle.style.animationDelay = `${delay}s`;
+                    particle.style.animationDuration = `${duration}s`;
+                    
+                    // Cor aleatória
+                    const colors = ['rgba(106, 90, 205, 0.6)', 'rgba(255, 127, 80, 0.6)', 'rgba(32, 178, 170, 0.6)', 'rgba(255, 215, 0, 0.6)'];
+                    particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    container.appendChild(particle);
+                }
+            }
+            
+            function updatePreview() {
+                document.getElementById('preview-name').innerHTML = 
+                    `<i class="fas fa-user icon"></i>${document.getElementById('name').value || 'Seu Nome'}`;
+                
+                document.getElementById('preview-department').innerHTML = 
+                    `<i class="fas fa-building icon"></i>${document.getElementById('department').value || 'Seu Departamento'}`;
+                
+                document.getElementById('preview-email').innerHTML = 
+                    `<i class="fas fa-envelope icon"></i>${document.getElementById('email').value || 'email@exemplo.com'}`;
+                
+                document.getElementById('preview-phone').innerHTML = 
+                    `<i class="fas fa-phone icon"></i>${document.getElementById('phone').value || '(00) 0000-0000'}`;
+                
+                document.getElementById('preview-location').innerHTML = 
+                    `<i class="fas fa-map-marker-alt icon"></i>${document.getElementById('location').value || 'Cidade, Estado'}`;
+                
+                const website = document.getElementById('website').value;
+                const websiteLink = document.getElementById('preview-website');
+                if (website) {
+                    const fullUrl = website.startsWith('http') ? website : `http://${website}`;
+                    websiteLink.href = fullUrl;
+                    websiteLink.textContent = fullUrl.replace(/^https?:\/\//, '').replace(/^www\./, '');
+                } else {
+                    websiteLink.href = '#';
+                    websiteLink.textContent = 'linhanyi.com';
+                }
+            }
+            
+            function generateSignature() {
+                const name = document.getElementById('name').value || 'Seu Nome';
+                const department = document.getElementById('department').value || 'Seu Departamento';
+                const email = document.getElementById('email').value || 'email@exemplo.com';
+                const phone = document.getElementById('phone').value || '(00) 0000-0000';
+                const location = document.getElementById('location').value || 'Cidade, Estado';
+                let website = document.getElementById('website').value || 'linhanyi.com';
+                
+                if (website && !website.startsWith('http')) {
+                    website = `http://${website}`;
+                }
+                
+                const websiteText = website.replace(/^https?:\/\//, '').replace(/^www\./, '');
+                
+                const signatureHTML = `
+                    <div style="font-family: Arial, sans-serif; font-size: 12px; line-height: 1.5; max-width: 600px;">
+                        <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                            <div style="position: relative; margin-right: 20px; padding-bottom: 30px;">
+                                <img src="Logo.png" alt="Linhanyl" style="height: 70px; animation: float 4s ease-in-out infinite;">
+                                <div style="position: absolute; height: 4px; border-radius: 4px; background-color: #6a5acd; bottom: -10px; left: 0; width: 100%; opacity: 0.8; animation: wave 3s infinite ease-in-out;"></div>
+                                <div style="position: absolute; height: 4px; border-radius: 4px; background-color: #ff7f50; bottom: -15px; left: 5%; width: 90%; opacity: 0.8; animation: wave 3s infinite ease-in-out 0.3s;"></div>
+                                <div style="position: absolute; height: 4px; border-radius: 4px; background-color: #20b2aa; bottom: -20px; left: 10%; width: 80%; opacity: 0.8; animation: wave 3s infinite ease-in-out 0.6s;"></div>
+                                <div style="position: absolute; height: 4px; border-radius: 4px; background-color: #ffd700; bottom: -25px; left: 15%; width: 70%; opacity: 0.8; animation: wave 3s infinite ease-in-out 0.9s;"></div>
+                            </div>
+                            <div style="border-left: 3px solid #6a5acd; padding-left: 15px; animation: fadeIn 1s ease-out;">
+                                <div style="font-weight: bold; font-size: 16px; color: #333; margin-bottom: 8px; display: flex; align-items: center;"><i class="fas fa-user" style="margin-right: 10px; color: #6a5acd; width: 16px; text-align: center; font-size: 14px; transition: all 0.3s;"></i>${name}</div>
+                                <div style="font-style: italic; color: #666; margin-bottom: 8px; display: flex; align-items: center;"><i class="fas fa-building" style="margin-right: 10px; color: #6a5acd; width: 16px; text-align: center; font-size: 14px; transition: all 0.3s;"></i>${department}</div>
+                                <div style="margin-bottom: 6px; display: flex; align-items: center;"><i class="fas fa-envelope" style="margin-right: 10px; color: #6a5acd; width: 16px; text-align: center; font-size: 14px; transition: all 0.3s;"></i>${email}</div>
+                                <div style="margin-bottom: 6px; display: flex; align-items: center;"><i class="fas fa-phone" style="margin-right: 10px; color: #6a5acd; width: 16px; text-align: center; font-size: 14px; transition: all 0.3s;"></i>${phone}</div>
+                                <div style="margin-bottom: 6px; display: flex; align-items: center;"><i class="fas fa-map-marker-alt" style="margin-right: 10px; color: #6a5acd; width: 16px; text-align: center; font-size: 14px; transition: all 0.3s;"></i>${location}</div>
+                                <div style="display: flex; align-items: center;"><i class="fas fa-globe" style="margin-right: 10px; color: #6a5acd; width: 16px; text-align: center; font-size: 14px; transition: all 0.3s;"></i><a href="${website}" style="color: #6a5acd; text-decoration: none; transition: all 0.3s;">${websiteText}</a></div>
+                            </div>
+                        </div>
+                        <div style="font-size: 11px; color: #999; margin-top: 15px; text-align: right; animation: slideIn 1.5s ease-out; font-weight: bold;">QUALIDADE EM TODOS OS PONTOS</div>
+                    </div>
+                    <style>
+                        @keyframes wave {
+                            0%, 100% { transform: translateX(0) scaleY(1) scaleX(1); }
+                            25% { transform: translateX(10px) scaleY(0.7) scaleX(0.9); }
+                            50% { transform: translateX(0) scaleY(1.3) scaleX(1.1); }
+                            75% { transform: translateX(-10px) scaleY(0.8) scaleX(0.95); }
+                        }
+                        @keyframes fadeIn {
+                            from { opacity: 0; transform: translateY(15px); }
+                            to { opacity: 1; transform: translateY(0); }
+                        }
+                        @keyframes slideIn {
+                            from { opacity: 0; transform: translateX(30px); }
+                            to { opacity: 1; transform: translateX(0); }
+                        }
+                        @keyframes float {
+                            0%, 100% { transform: translateY(0); }
+                            50% { transform: translateY(-10px); }
+                        }
+                    </style>
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+                `;
+                
+                alert('Assinatura gerada com sucesso! Use os botões para copiar ou baixar.');
+                return signatureHTML;
+            }
+            
+            function copyHTML() {
+                const signatureHTML = generateSignature();
+                navigator.clipboard.writeText(signatureHTML)
+                    .then(() => alert('HTML copiado para a área de transferência!'))
+                    .catch(err => alert('Erro ao copiar: ' + err));
+            }
+            
+            async function downloadGIF() {
+                const button = document.getElementById('download-btn');
+                button.disabled = true;
+                button.textContent = 'Criando GIF...';
+                
+                try {
+                    // Criar um GIF usando gif.js
+                    const gif = new GIF({
+                        workers: 2,
+                        quality: 10,
+                        width: 600,
+                        height: 200,
+                        workerScript: 'https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js'
+                    });
+                    
+                    // Capturar frames da animação
+                    const signatureElement = document.getElementById('signature-content');
+                    
+                    for (let i = 0; i < 20; i++) {
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        const canvas = await html2canvas(signatureElement, {
+                            scale: 1,
+                            logging: false,
+                            useCORS: true,
+                            allowTaint: true
+                        });
+                        gif.addFrame(canvas, {delay: 50});
+                    }
+                    
+                    gif.on('finished', function(blob) {
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'assinatura-linhanyl.gif';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                        
+                        button.disabled = false;
+                        button.textContent = 'Download GIF';
+                    });
+                    
+                    gif.render();
+                } catch (error) {
+                    console.error('Erro ao criar GIF:', error);
+                    alert('Erro ao criar GIF. Verifique o console para detalhes.');
+                    button.disabled = false;
+                    button.textContent = 'Download GIF';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
